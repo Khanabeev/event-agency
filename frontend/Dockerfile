@@ -1,7 +1,7 @@
 # Base stage
 FROM node:20.10.0-alpine AS base 
 WORKDIR /var/www/html
-COPY ./frontend/package.*.json ./frontend/vite.config.js ./
+COPY ./frontend/package.*.json ./frontend/vite.config.ts ./
 COPY ./frontend .
 RUN npm install
 

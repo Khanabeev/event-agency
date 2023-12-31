@@ -22,7 +22,7 @@ class EventFactory extends Factory
         return [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
-            'date' => $this->faker->dateTimeBetween('+0 days', '+2 years'),
+            'date' => $this->faker->dateTimeBetween('now', '+3 days'),
             'location' => $this->faker->address,
         ];
     }

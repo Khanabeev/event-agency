@@ -1,0 +1,25 @@
+.table {
+    font-size: 1rem;
+}
+
+.no__wrap {
+    white-space: nowrap;
+}
+
+@media(max-width: 992px) {
+    .table {
+        font-size: 0.8rem;
+    }
+}
+
+@media(max-width: 768px) {
+    .table {
+        font-size: 0.7rem;
+    }
+}
+
+@media(max-width: 476px) {
+    .table {
+        font-size: 0.5rem;
+    }
+}
