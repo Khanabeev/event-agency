@@ -1,0 +1,128 @@
+version: "3.9"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
+    container_name: api
+    restart: unless-stopped
+    volumes:
+      - ./api/app:/var/www/html/app
+      - ./api/config:/var/www/html/config
+      - ./api/database:/var/www/html/database
+      - ./api/routes:/var/www/html/routes
+      - ./api/storage:/var/www/html/storage
+      - ./api/tests:/var/www/html/tests
+      - ./api/.env:/var/www/html/.env
+      - ./api/src:/var/www/html/src
+    command: sh -c "./wait-for-it.sh db:3306 -t 30 && ./wait-for-it.sh redis:6379 -t 30 && php-fpm"
+    depends_on:
+      - migrate
+      - db
+      - redis
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.2.0
+    container_name: db
+    restart: unless-stopped
+    volumes:
+      - ./deployment/config/mysql/create_database.sql:/docker-entrypoint-initdb.d/create_database.sql
+      - ./deployment/config/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+      - ./mysqldata:/var/lib/mysql
+    ports:
+      - "3333:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: 'laravel'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 'admin'
+    networks:
+      - app-network
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8090:80
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  migrate:
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
+    container_name: migrate
+    command: sh -c "./wait-for-it.sh db:3306 -t 30 && php /var/www/html/artisan migrate --force"
+    restart: no
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7.0.11-alpine
+    container_name: redis
+    restart: unless-stopped
+    volumes:
+      - ./redisdata:/data
+    ports:
+      - "63790:6379"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+      target: dev
+    container_name: frontend
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/var/www/html
+      - /var/www/html/node_modules
+    environment:
+      - NODE_ENV=local
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./api:/var/www/html
+      - ./deployment/config/nginx/conf.d/:/etc/nginx/conf.d/
+    environment:
+      - NGINX_HOST=localhost
+    networks:
+      - app-network
+    depends_on:
+      - api
+      - db
+
+  proxy: 
+    build:
+      context: .
+      dockerfile: ./Dockerfile.proxy 
+    restart: unless-stopped
+    container_name: proxy
+    ports:
+      - "3000:80"
+    volumes:
+      - ./deployment/config/nginx/proxy.conf:/etc/nginx/nginx.conf 
+    networks:
+      - app-network
+    depends_on:
+      - frontend 
+      - nginx
+
+networks:
+  app-network:
+    driver: bridge
