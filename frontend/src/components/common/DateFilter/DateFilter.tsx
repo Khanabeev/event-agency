@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { BsArrowClockwise } from "react-icons/bs";
 
 interface DateFilterProps {
   onFilter: (date: string) => void;
@@ -33,7 +34,7 @@ const DateFilter = ({
             className="btn btn-primary align-self-end mx-2"
             onClick={() => cleanUpFilter()}
           >
-            Clear filter
+            <BsArrowClockwise size={20}/>
           </button>
         </div>
       </div>
