@@ -58,7 +58,7 @@ services:
       context: .
       dockerfile: ./api/Dockerfile
     container_name: migrate
-    command: sh -c "./wait-for-it.sh db:3306 -t 30 && php /var/www/html/artisan migrate --force"
+    command: sh -c "./wait-for-it.sh db:3306 -t 30 && php /var/www/html/artisan migrate --seed --force"
     restart: no
     depends_on:
       - db

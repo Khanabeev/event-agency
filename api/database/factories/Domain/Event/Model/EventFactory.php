@@ -1,12 +1,12 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Domain\Event\Model;
 
-use App\Models\Event;
+use Domain\Event\Model\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Event>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Domain\Event\Model\Event>
  */
 class EventFactory extends Factory
 {
