@@ -1,0 +1,5 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-north1-docker.pkg.dev/$PROJECT_ID/laravel/laravel:v1', '.']
+images:
+  - 'europe-north1-docker.pkg.dev/$PROJECT_ID/laravel/laravel:v1'
