@@ -1,9 +1,10 @@
 ## Steps required to run the project locally
 
 1. Download the repo on your local machine
-2. Run `docker-compose up`
-3. Open `localhost:3000`
-4. The database is seeded with 10 events. You can add more events by running `php artisan db:seed` in the `api`
+2. Create env file wiht `cp .env.example .env`
+3. Run `docker-compose up`
+4. Open `localhost:3000`
+5. The database is seeded with 10 events. You can add more events by running `php artisan db:seed` in the `api`
    container.
 
 ## Backend
